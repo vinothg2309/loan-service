@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: micro-config-map
+data:
+  MONGODB_HOST: mongodb
+  LOAN_SERVICE_URL: http://loan-service:801/loan/fetch
+  VERSION: v2
+  MONGODB_PORT: !!integer 27017
+  MONGODB_STATEFUL_HOST: stateful-mongodb

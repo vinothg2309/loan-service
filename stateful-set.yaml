@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stateful-counter
+spec:
+  serviceName: "counter-app"
+  selector:
+    matchLabels:
+      app: counter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: counter
+    spec:
+      containers:
+        - name: counter
+          image: "vinothg2309/counter:1.0"
+          volumeMounts:
+            - name: stateful-counter
+              mountPath: /app/
+      volumes:
+        - name: stateful-counter
+          persistentVolumeClaim:
+            claimName: pv-volume-claim
+---
+apiVersion: v1
+  kind: Service
+  metadata:
+    name: stateful-headless-service
+  spec:
+    selector:
+      app: counter
+    ports:
+      - name: http
+        protocol: TCP
+        port: 80
+    clusterIP: none

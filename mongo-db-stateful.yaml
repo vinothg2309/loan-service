@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stateful-mongodb
+  labels:
+    app: mongodb
+    name: mongodb
+spec:
+  replicas: 1
+  serviceName: "mongodb"
+  selector:
+    matchLabels:
+      appdb: mongo
+  template:
+    metadata:
+      labels:
+        name: mongo
+        appdb: mongo
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:3.6.6
+          #env:
+          #  - name: MONGO_INITDB_ROOT_USERNAME
+          #    value: root_user
+          #  - name: MONGO_INITDB_ROOT_PASSWORD
+          #    value: root_pwd
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /app/
+      volumes:
+        - name: mongo-volume
+          persistentVolumeClaim:
+            claimName: stateful-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stateful-mongodb
+  labels:
+    app: mongo-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+  selector:
+    appdb: mongo
